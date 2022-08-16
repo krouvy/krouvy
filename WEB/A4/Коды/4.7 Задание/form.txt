@@ -1,0 +1,11 @@
+			<form class="subscribe__form" action="https:/google.com/search/">
+				<input method="GET" class="subscribe__input" type="email" name="email" id="inputEmail" placeholder="Email Address..." required>
+				<button class="subscribe__button" type="submit">Subscribe</button>
+			</form>
+			
+					<form class="feedback__form" action="https:/google.com/search/">
+						<input class="feedback__input feedback__name"  type="text" method="GET" name="name"  placeholder="Name" required>
+						<input class="feedback__input feedback__mail" type="email" method="GET" name="email" placeholder="Your Mail" required>
+						<input class="feedback__input feedback__message" type="text" method="GET" name="text" placeholder="Type your message" required>
+						<button class="feedback__button" type="submit">Send message</button>
+					</form>
