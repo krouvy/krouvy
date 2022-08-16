@@ -1,0 +1,38 @@
+.wrapper {
+    min-height: 200px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start; 
+    align-items: center;
+    background-color: rgb(91, 28, 128);
+}
+
+.block {
+    background-color: rgb(185, 177, 190);
+    width: 100px;
+    height: 50px;
+    margin: 2vw;
+    color: #fff;
+    font-size: 30px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+
+@media screen and (max-width: 400px) {
+    .wrapper {
+        margin: 0px;
+        justify-content: center;
+    }
+    .block {
+        width: 80%;
+    }
+}
+
+@media screen and (max-width: 200px) {
+    .block {
+        background-color: rgb(255, 0, 0);
+        max-width: 50px;
+    }
+}

@@ -1,0 +1,20 @@
+.wrapper {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.object {
+    flex: 1 1 250px;
+    margin: 5px;
+    background-color: azure;
+}
+
+.object > img {
+    width: 90%; /*без этого свойства, картинки просто огромные */
+}
+
+@media screen and (max-width: 750px) {
+    .object {
+        flex: 1 0 32%;
+    }
+}
