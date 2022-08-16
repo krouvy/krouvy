@@ -1,0 +1,24 @@
+.par {
+    color: red
+}
+
+.item-wrapper {
+    /* position: relative; */
+
+    font-size: 20px;
+}
+
+.item {
+    display: block;
+    max-width: 240px;
+    min-height: 40px;
+    padding: auto;
+    background-color: rgb(194, 191, 236);
+    margin-bottom: 20px;
+}
+
+.special {
+    position: relative;
+    /* bottom: 630px;  */
+
+}

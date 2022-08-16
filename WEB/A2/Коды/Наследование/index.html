@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Наследование</title>
+        <style>
+            main {
+                font-size: 20px;
+                color:red
+            }
+
+            header {
+                color: rgb(255, 4, 180);
+            }                   
+
+            header a {
+                display: inline-block;
+                margin: 0 30px;
+                color: inherit;
+            }
+
+            .wrap {
+                position: relative;
+                width: 800px;
+                height: 500px;
+                background-color: rgb(235, 194, 61);
+            }
+    
+            .box {
+                position: absolute;
+                right: 0;
+                bottom: 0;
+                width: 50px;
+                height: 50px;
+                background-color: rgb(240, 56, 10);
+            }    
+            
+            /* header a:nth-of-type(1) {
+                color: green;
+            } */
+        </style>
+    </head>
+    <body>
+        <header>
+            <p>Это хэдер</p>
+            <a href="#">Главная</a>
+            <a href="pages/about.html">О нас</a>
+            <a href="pages/contacts.html">Контакты</a>
+        </header>
+        <div class="wrap">
+            <div class="box"> </div>
+        </div>
+        <main>
+            <h1>Пример наследования</h1>
+            <p style="font-size: 30px; color: blue"> Этоn  параграф синий </p> 
+            <p> А этот красный, он наследует свойство от body</p>
+            <div class="wrap">
+  <div class="box"> </div>
+</div>
+        </main>
+        <footer>
+            <p>Это футер</p>
+        </footer>
+
+    </body>
+</html>

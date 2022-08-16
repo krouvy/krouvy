@@ -1,0 +1,33 @@
+p {
+    font-size: 20px;
+    /*background-color: rgba(29, 28, 27, 0.6);*/
+    color: rgba(0, 7, 0, 0.815);
+    font-weight: normal;
+}
+h1, h2{
+    color:rgb(80, 177, 201)
+}
+
+main > strong{
+    font-size: 30px;
+}
+h1 + p{
+    background-color: rgb(188, 188, 240);
+}
+p:first-of-type{
+    color: rgb(114, 91, 241);
+}
+
+main p:first-of-type{
+    color: rgb(226, 43, 43);
+}
+
+h2:nth-child(11){ /* Этим способом мы обращаемся ко всем потомкам родителя h2 в
+                  в данном случае это main, первый потомок h1, но это правило написано,
+                  под h2, поэтому на нем оно не сработает, следующий 2 сработает и следующий
+                  11 сработает. Учитываются все дети */
+    background-color: black;
+}
+h2:nth-of-type(3) { /* А тут нумирация проще, просто 1 2 3. И стиль сработает на нужные h2*/
+    background-color: rgb(14, 219, 151);
+}
