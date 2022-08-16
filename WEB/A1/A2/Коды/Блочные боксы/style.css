@@ -1,0 +1,21 @@
+.boku {
+    color: red;
+    }
+.R {
+    display: inline-block;
+    background-color: aquamarine;
+    width: 20%;
+    max-width: 200px;
+    min-height: 100px;
+    margin: 20px;
+    vertical-align: bottom;
+    margin: 30px 50px;
+}
+
+.M {
+    padding: 40px 30px;
+    background-color: rgb(26, 78, 54);
+    border: 100px;
+    text-align: center;
+    box-sizing: border-box;
+}
