@@ -1,0 +1,48 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        .popup {
+            width: 500px;
+            height: 500px;
+            background-color: rgb(231, 96, 18);
+            display: block;  
+            clip-path: circle(60%);
+        }
+
+        .popup:hover {
+            background-color: red;
+        }
+
+        .visuallyhidden {
+            border: 0;
+            clip: rect(0 0 0 0);
+            height: 1px;
+            margin: -1px;
+            overflow: hidden;
+            padding: 0;
+            position: absolute;
+            width: 1px;
+        }
+
+    </style>
+</head>
+<body>
+<button class="popup-button">Войти</button>
+<div class="popup">
+    <p>Привет, код на странице</p>
+</div>
+
+<script>
+    let button = document.querySelector('.popup-button');
+    button.addEventListener('click', showPopup);
+    
+    function showPopup() {
+        document.querySelector('.popup').classList.toggle('visuallyhidden');
+        console.log('showPopup работает');
+    }
+</script>
+
+</body>
+</html>

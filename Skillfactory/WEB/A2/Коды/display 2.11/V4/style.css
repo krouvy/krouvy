@@ -1,0 +1,23 @@
+.item_all {
+    display: inline-block;
+    background-color: rgb(119, 187, 214);
+    width: auto;
+}
+.item {
+    display: inline-block;
+    width: 300px;
+    background-color: rgb(240, 152, 70);
+}
+
+.elem_name {
+    display: block;
+    text-align: center;
+    font-size: 30px;
+    font-weight: 700;
+}
+
+.elem_count {
+    display: block;
+    text-align: center;
+    font-size: 25px;
+}

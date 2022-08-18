@@ -1,0 +1,64 @@
+body {
+    margin: 0 40px 0 40px;
+    background-color: #e0e0e0;
+    max-width: 1248px;
+    margin: auto; /*Выравнивание страницы по центру*/ 
+}
+
+.header { 
+    max-width: 1248px;
+    background-color: #141414;
+    min-height: 90px;
+    color: white;
+    text-align: center; /*Выравнивание элементов header в центре*/ 
+    margin-bottom: 30px;
+}  
+
+.site-menu {
+    display: inline-block;
+
+}
+
+.site-menu a{
+    display: inline-block;
+    padding: 42px 25px 32px;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.site-menu a:hover{
+    background-color: red;
+}
+
+.wrapper{
+    display: inline-block;
+    width: 50%;
+    margin-right: 68px;
+    vertical-align: top;
+}
+.wrapper h1 {
+    font-size: 55px;
+    margin-top: 0;
+}
+.wrapper a {
+    margin-top: 0;
+}
+.contact-link{
+    display: inline-block;
+    padding: 20px 25px 20px 25px;
+    background-color: red;
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    margin: 10px 0 10px;
+}
+
+.intro-image{
+    display: inline-block;
+    
+    /* margin-top: 40px; */
+    width: 551px;
+    height: 356px;
+}

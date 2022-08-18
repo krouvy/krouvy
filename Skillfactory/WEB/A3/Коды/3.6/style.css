@@ -1,0 +1,10 @@
+body {
+    background-color: rgb(202, 169, 233);
+}
+
+.menu {
+    display: flex; /*Создание flex контейнера*/
+    flex-direction: column-reverse; /*Свойство меняет направление главной оси*/
+    /* background-color: coral; */
+    list-style-type: none;  /*Убираем стили для списка, убираем точки ul*/
+}

@@ -1,0 +1,9 @@
+.rzina::before {
+    content: 'Ко';
+    background-color: aqua;
+}
+
+.cor::after {
+    content: 'зина';
+    background-color: rgb(146, 57, 163);
+}

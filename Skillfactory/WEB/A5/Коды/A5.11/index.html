@@ -1,0 +1,63 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .grid-wrapper {
+            display: grid;
+            grid-template-columns: repeat(2, 400px);
+            grid-template-rows: repeat(3, 400px);
+            grid-gap: 2vw;
+            justify-items: center;
+            align-items: center;
+            height: 100vw;
+        }
+
+        .grid-item {
+            box-sizing: border-box;
+            color: #fff;
+            padding: 1em;
+            font-size: 20px;
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(140deg, rgb(160, 129, 245),rgb(54, 18, 95));
+            display: grid;
+            justify-items: center;
+            align-items: center;
+        }
+
+        .decor {
+            width: 50px;
+            height: 50px;
+            background-color: rgb(228, 220, 250);
+            transform: rotate(45deg);
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-wrapper">
+   	 <div class="grid-item item-1">
+   		 <h2>Grid item</h2>
+   		 <div class="decor"></div>
+   	 </div>
+   	 <div class="grid-item item-2">
+   		 <h2>Grid item</h2>
+   		 <div class="decor"></div>
+   	 </div>
+   	 <div class="grid-item item-3">
+   		 <h2>Grid item</h2>
+   		 <div class="decor"></div>
+   	 </div>
+   	 <div class="grid-item item-4">
+   		 <h2>Grid item</h2>
+   		 <div class="decor"></div>
+   	 </div>
+   	 <div class="grid-item item-5">
+   		 <h2>Grid item</h2>
+   		 <div class="decor"></div>
+   	 </div>
+    </div>
+</body>
+</html>

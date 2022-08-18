@@ -1,0 +1,56 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .page-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 3fr 1fr;
+            grid-template-rows: minmax(80px, auto) 1fr minmax(80px, auto);
+            height: 100vh;
+        }
+
+        .site-header {
+            background-color: rgb(231, 121, 18);
+            grid-column: 1/4;
+            grid-row: 1/2;
+        }
+
+        .content {
+            background-color: rgb(238, 229, 98);
+            grid-column: 2/3;
+            grid-row: 2/3;
+        }
+
+        .sidebar {
+            background-color: rgb(98, 198, 238);
+            grid-column: 3/4;
+            grid-row: 2/3;
+        }
+
+        .sidebar2 {
+            background-color: rgb(91, 187, 126);
+            grid-column: 1/2;
+            grid-row: 2/3;
+        }
+
+        .site-footer {
+            background-color: rgb(74, 218, 74);
+            grid-column: 1/4;
+            grid-row: 3/4;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+   	 <header class="site-header"></header>
+   	 <main class="content"></main>
+   	 <aside class="sidebar"></aside>
+        <aside class="sidebar2"></aside>
+   	 <footer class="site-footer"></footer>
+    </div>
+</body>
+</html>
