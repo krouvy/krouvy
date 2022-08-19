@@ -1,0 +1,15 @@
+{
+    "configurations": [
+        {
+            "name": "Dynamic Python: File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "justMyCode": true
+        }
+    ]
+}
+
+{
+    "python.defaultInterpreterPath": "C:/Users/BuklovAV/AppData/Local/Programs/Python/Python38/python.exe"
+}
