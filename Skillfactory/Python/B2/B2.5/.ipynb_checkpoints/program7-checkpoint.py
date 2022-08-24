@@ -1,10 +1,13 @@
 import random
 
 listSongs = set()
-while len(listSongs) != 10:
-    listSongs.add(str(random.randint(1, 10)))
 
-print(list(map(int, list(listSongs))))
+while len(listSongs) != 10:
+    listSongs.add(random.randint(1, 10))
+
+print(listSongs)
+
+
 
 border = (1, 10)
 length = 10
