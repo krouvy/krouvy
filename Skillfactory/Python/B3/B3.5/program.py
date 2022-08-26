@@ -1,0 +1,1 @@
+print(type(range(5)), range(5), list(range(5)))
