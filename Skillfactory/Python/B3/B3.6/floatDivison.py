@@ -40,15 +40,18 @@ def floatDivision(num, delNum, tochnost=16):
     return {'full': strNum[0:tochnost + strNum.index('.') + 1], 'short': ''}
 
 
-num = 1634564657
+# num = 1634564657
 # num = 14657
-delNum = 23
+# delNum = 23
 
-# num = 178
-# delNum = 63
+
 
 # num = 100
 # delNum = 25
+
+
+num = 178
+delNum = 63
 
 tochnost = 300
 
