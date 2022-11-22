@@ -1,6 +1,6 @@
 def getIndexMass(data):
     index = data[0] / (data[1] / 100) ** 2
-    return index
+    return -index
 
 
 data = [
@@ -12,9 +12,11 @@ data = [
 ]
 
 print(data)
-print(sorted(list(map(getIndexMass, data))))
+print(list(map(getIndexMass, data)))
+
+print()
 
 print(sorted(data, key=getIndexMass))
 print(sorted(data, key=lambda x: x[0] / x[1] ** 2))
+print(sorted(list(map(getIndexMass, data))))
 
-# print(sorted(list(map(getIndexMass, data))))
