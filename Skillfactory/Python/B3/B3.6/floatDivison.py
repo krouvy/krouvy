@@ -50,10 +50,10 @@ def floatDivision(num, delNum, tochnost=16):
 # delNum = 25
 
 
-num = 178
-delNum = 63
+num = 355
+delNum = 113
 
-tochnost = 300
+tochnost = 1000
 
 div = floatDivision(num, delNum, tochnost)
 
