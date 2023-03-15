@@ -23,6 +23,8 @@ class ItemViewEvent(Event):
         self.session_id = session_id
         self.number_of_views = number_of_views
 
+        Event.__init__(self, self.timestamp, 'Ахахаха')
+
     def show_description(self):
         print("This event means someone has browsed an item.")
 
