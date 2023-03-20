@@ -10,3 +10,19 @@ print(str, '=', locals()[str])
 fooStr = 'foo'
 print(f'{fooStr}()')
 locals()[fooStr]()
+
+# Можно
+eval('print')('Жопа')
+
+# Нельзя
+# eval('print(С ручкой)')
+
+# Можно
+exec('print(123)')
+
+# Нельзя
+# exec('print(Жопа)')
+
+# Можно
+exec('print("Жопа c ручкой")')
+
