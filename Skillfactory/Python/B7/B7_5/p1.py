@@ -31,130 +31,161 @@ def getCoordinage():
             print('Координаты должны состоять только из цифр')
 
 
-class GameField:
+class GameProccess:
 
-    def __init__(self):
-        self.visField = [
-            ['О', 'О', 'О', 'О', 'О', 'О'],
-            ['О', 'О', 'О', 'О', 'О', 'О'],
-            ['О', 'О', 'О', 'О', 'О', 'О'],
-            ['О', 'О', 'О', 'О', 'О', 'О'],
-            ['О', 'О', 'О', 'О', 'О', 'О'],
-            ['О', 'О', 'О', 'О', 'О', 'О'],
-        ]
-        self.realField = [
-            ['О', 'О', '1', '1', 'О', '1'],
-            ['О', 'О', 'О', 'О', '1', 'О'],
-            ['О', 'О', 'О', '1', 'О', 'О'],
-            ['О', 'О', '1', 'О', 'О', 'О'],
-            ['О', 'О', 'О', 'О', 'О', 'О'],
-            ['О', 'О', 'О', 'О', 'О', 'О'],
-        ]
+    def __init__(self, name='name'):
+        self.playerName = name
         self.playerShips = Flot()
         self.computerShips = Flot()
-        printField(self.visField)
 
     def StartPlacementShips(self):
         allShips = self.playerShips.getAllShips()
-        print(allShips[0].size, allShips[0].coords)
 
-        tryShipPlace(self.realField, allShips[0].size, allShips[0].coords)
-
-        while True:
-            testField = self.realField
-            for i in range(0, allShips[0].size):
-                coord = getCoordinage()
-                print('Координаты', coord)
-                testField[coord[0]][coord[1]] = '*'
-                printField(testField)
+        for ship in allShips:
+            tryShipPlace(self.playerShips.realField, self.playerShips.displayField, ship.size, ship.coords,
+                         self.playerName)
 
 
-def tryShipPlace(field, size=3, coords=1):
+# Функция располагает на поле корабль
+def tryShipPlace(field, visionField, size, coords, name='computer'):
+    print('Установка корабля')
+    printField(visionField)
 
     while size:
         placeBoofer = []
         coord = getCoordinage()
-        print(coord)
 
+        # Если первая точка не занята
         if field[coord[0]][coord[1]] == 'О':
-
+            # Получение буферов возможных точек
+            # для установки для разных кораблей
             if size == 3:
-                if checkOutOfRange(coord[1] + 1) and checkOutOfRange(coord[1] + 2):
-                    if field[coord[0]][coord[1] + 1] == 'О' and field[coord[0]][coord[1] + 2] == 'О':
-                        placeBoofer.append([coord, [coord[0], coord[1] + 1], [coord[0], coord[1] + 2]])
-                if checkOutOfRange(coord[1] - 1) and checkOutOfRange(coord[1] - 2):
-                    if field[coord[0]][coord[1] - 1] == 'О' and field[coord[0]][coord[1] - 2] == 'О':
-                        placeBoofer.append([coord, [coord[0], coord[1] - 1], [coord[0], coord[1] - 2]])
-                if checkOutOfRange(coord[1] - 1) and checkOutOfRange(coord[1] + 1):
-                    if field[coord[0]][coord[1] - 1] == 'О' and field[coord[0]][coord[1] + 1] == 'О':
-                        placeBoofer.append([coord, [coord[0], coord[1] - 1], [coord[0], coord[1] + 1]])
-                if checkOutOfRange(coord[0] + 1) and checkOutOfRange(coord[0] + 2):
-                    if field[coord[0] + 1][coord[1]] == 'О' and field[coord[0] + 2][coord[1]] == 'О':
-                        placeBoofer.append([coord, [coord[0] + 1, coord[1]], [coord[0] + 2, coord[1]]])
-                if checkOutOfRange(coord[0] - 1) and checkOutOfRange(coord[0] - 2):
-                    if field[coord[0] - 1][coord[1]] == 'О' and field[coord[0] - 2][coord[1]] == 'О':
-                        placeBoofer.append([coord, [coord[0] - 1, coord[1]], [coord[0] - 2, coord[1]]])
-                if checkOutOfRange(coord[0] - 1) and checkOutOfRange(coord[0] + 1):
-                    if field[coord[0] - 1][coord[1]] == 'О' and field[coord[0] + 1][coord[1]] == 'О':
-                        placeBoofer.append([coord, [coord[0] - 1, coord[1]], [coord[0] + 1, coord[1]]])
+                placeBoofer = getBigShipBoofer(field, coord)
             elif size == 2:
-                print('Не готово')
+                placeBoofer = getMidShipBoofer(field, coord)
             elif size == 1:
                 print('Не готово')
 
+            # Если буфер возможных точек остался пустым, то к началу цикла
             if len(placeBoofer) == 0:
                 print('Нет вариантов для установки точки')
                 continue
             else:
                 readyBoofer = []
 
+                # Цикл исключения из буфера занятых точек
                 for i in range(0, len(placeBoofer)):
                     for j in range(0, len(placeBoofer[i])):
                         if not checkShipsOutsidePoint(placeBoofer[i][j], field):
                             placeBoofer[i][j] = False
-
+                # Цикл заполнения нового буфера свободных точек
                 for i in range(0, len(placeBoofer)):
                     if False not in placeBoofer[i]:
                         readyBoofer.append(placeBoofer[i])
 
+                # Если новый буфер не заполнился,
+                # то из этой точки не поставить корабль,
+                # переход к началу цикла
                 if len(readyBoofer) == 0:
                     print('Нет вариантов для установки точки')
                     continue
+                else:
+                    # Иначе заполняем на видимом поле первую точку
+                    coords[0] = coord
+                    visionField[coords[0][0]][coords[0][1]] = 'S'
+                    printField(visionField)
 
-                print('Возможные варианты установки', readyBoofer)
+                    # Уменьшаем стартовый размер корабля на 1
+                    size -= 1
 
-                coords[0] = coord
-                print(coords)
-                print('Вторая координата')
-                while size:
-                    secondCoord= getCoordinage()
-
-                    for readyCoord in readyBoofer:
-                        if secondCoord in readyCoord:
-                            coords[1] = secondCoord
-                            size -= 1
-                            readyBoofer = readyCoord
-                            continue
-                    if size == 2:
-                        print('Нельзя так располагать корабль')
-                        continue
-
+                    # цикл установки второй точки
                     while size:
-                        print(coords)
+                        # Новый буфер, который будет хранить совпадение
+                        # уже двух точек
+                        lastBoofer = []
+
+                        secondCoord = getCoordinage()
+
+                        # Если 2 точки присутвуют в буфере, добавляем их в новый буфер
+                        for readyCoord in readyBoofer:
+                            if coords[0] in readyCoord and secondCoord in readyCoord:
+                                lastBoofer.append(readyCoord)
+
+                        # Если буфер остался пустым
+                        if len(lastBoofer) == 0:
+                            # если это корабль длиной 2 клетки
+                            if size == 1:
+                                # И точка уже была введена этим кораблем
+                                if secondCoord in coords:
+                                    print('Координата занята')
+                                else:
+                                    # Проверяю есть ли эта точка в первом буфере
+                                    for readyCoord in readyBoofer:
+                                        if secondCoord in readyCoord:
+                                            # Если да, то рисую корабль длинной 2 клетки
+                                            coords[1] = secondCoord
+                                            visionField[coords[1][0]][coords[1][1]] = 'S'
+                                            printField(visionField)
+                                            size -= 1
+                                            # Заполняю реальное поле координатами корабля
+                                            for finalCoord in coords:
+                                                field[finalCoord[0]][finalCoord[1]] = 'S'
+                                            break
+                                    # если цикл корабль длинной 2 клетки не нарисовался,
+                                    # то переход к началу цикла
+                                    if size == 1:
+                                        print('Нельзя так располагать корабль')
+                                        continue
+                            # если корабль в 3 клетки, но второй
+                            # буфер остался пустым
+                            else:
+                                print('Нельзя так располагать корабль')
+                                continue
+                        # Если новый буфер не пустой
+                        else:
+                            # проверка не было ли повтора
+                            if secondCoord in coords:
+                                print('Координата занята')
+                            # если без повтора,
+                            # то устанавливается вторая координата
+                            else:
+                                coords[1] = secondCoord
+                                visionField[coords[1][0]][coords[1][1]] = 'S'
+                                printField(visionField)
+                                size -= 1
+                                # Если это корабль длинной 2 клетки,
+                                # то заполняем реальное поле и останавливаем цикл
+                                if size == 0:
+                                    for finalCoord in coords:
+                                        field[finalCoord[0]][finalCoord[1]] = 'S'
+                                break
+                    # Если цикл не был остановлен,
+                    # то включается цикл подбора
+                    # последней точки
+                    while size:
                         lastCoord = getCoordinage()
 
-                        if lastCoord in readyBoofer:
-                            coords[2] = lastCoord
-                            size -= 1
+                        for lastBooferCord in lastBoofer:
+                            if lastCoord in lastBooferCord:
+                                if lastCoord in coords:
+                                    print('Координата занята')
+                                else:
+                                    coords[2] = lastCoord
+                                    visionField[coords[2][0]][coords[2][1]] = 'S'
+                                    printField(visionField)
+                                    size = 0
+                                    for finalCoord in coords:
+                                        field[finalCoord[0]][finalCoord[1]] = 'S'
 
                         if size == 1:
-                            print('Нельзя так располагать корабль')
-                            continue
+                            print('Нельзя так располагать корабль', size)
         else:
             print('Точка занята')
-    print('Готово', coords)
+    print('Корабль установлен')
 
 
+# Функция проверяет поля вокруг точки
+# если в точке есть корабль, возвращает False
 def checkShipsOutsidePoint(coord, field):
     if all([coord[0] >= 1,
             coord[0] <= 4,
@@ -171,12 +202,12 @@ def checkShipsOutsidePoint(coord, field):
     else:
         if coord[0] == 0:
             if coord[1] == 0:
-              if field[coord[0] + 1][coord[1]] == 'О' and field[coord[0]][coord[1] + 1] == 'О':
-                  return True
-              else:
-                  return False
+                if field[coord[0] + 1][coord[1]] == 'О' and field[coord[0]][coord[1] + 1] == 'О':
+                    return True
+                else:
+                    return False
             elif coord[1] == 5:
-                if field[coord[0] - 1][coord[1]] == 'О' and field[coord[0]][coord[1] + 1] == 'О':
+                if field[coord[0] - 1][coord[1]] == 'О' and field[coord[0]][coord[1] - 1] == 'О':
                     return True
                 else:
                     return False
@@ -189,10 +220,10 @@ def checkShipsOutsidePoint(coord, field):
                     return False
         elif coord[0] == 5:
             if coord[1] == 0:
-              if field[coord[0] - 1][coord[1]] == 'О' and field[coord[0]][coord[1] + 1] == 'О':
-                  return True
-              else:
-                  return False
+                if field[coord[0] - 1][coord[1]] == 'О' and field[coord[0]][coord[1] + 1] == 'О':
+                    return True
+                else:
+                    return False
             elif coord[1] == 5:
                 if field[coord[0] - 1][coord[1]] == 'О' and field[coord[0]][coord[1] - 1] == 'О':
                     return True
@@ -245,6 +276,8 @@ def checkShipsOutsidePoint(coord, field):
                     else:
                         return False
 
+
+# Проверяет входит ли точка в размер поля
 def checkOutOfRange(coord):
     if coord >= 0 and coord <= 5:
         return True
@@ -252,9 +285,75 @@ def checkOutOfRange(coord):
         False
 
 
+# Функция возвращает буфер возможных точек для
+# Расположения корабля в 3 клетки
+def getBigShipBoofer(field, coord):
+    placeBoofer = []
+
+    if checkOutOfRange(coord[1] + 1) and checkOutOfRange(coord[1] + 2):
+        if field[coord[0]][coord[1] + 1] == 'О' and field[coord[0]][coord[1] + 2] == 'О':
+            placeBoofer.append([coord, [coord[0], coord[1] + 1], [coord[0], coord[1] + 2]])
+    if checkOutOfRange(coord[1] - 1) and checkOutOfRange(coord[1] - 2):
+        if field[coord[0]][coord[1] - 1] == 'О' and field[coord[0]][coord[1] - 2] == 'О':
+            placeBoofer.append([coord, [coord[0], coord[1] - 1], [coord[0], coord[1] - 2]])
+    if checkOutOfRange(coord[1] - 1) and checkOutOfRange(coord[1] + 1):
+        if field[coord[0]][coord[1] - 1] == 'О' and field[coord[0]][coord[1] + 1] == 'О':
+            placeBoofer.append([coord, [coord[0], coord[1] - 1], [coord[0], coord[1] + 1]])
+    if checkOutOfRange(coord[0] + 1) and checkOutOfRange(coord[0] + 2):
+        if field[coord[0] + 1][coord[1]] == 'О' and field[coord[0] + 2][coord[1]] == 'О':
+            placeBoofer.append([coord, [coord[0] + 1, coord[1]], [coord[0] + 2, coord[1]]])
+    if checkOutOfRange(coord[0] - 1) and checkOutOfRange(coord[0] - 2):
+        if field[coord[0] - 1][coord[1]] == 'О' and field[coord[0] - 2][coord[1]] == 'О':
+            placeBoofer.append([coord, [coord[0] - 1, coord[1]], [coord[0] - 2, coord[1]]])
+    if checkOutOfRange(coord[0] - 1) and checkOutOfRange(coord[0] + 1):
+        if field[coord[0] - 1][coord[1]] == 'О' and field[coord[0] + 1][coord[1]] == 'О':
+            placeBoofer.append([coord, [coord[0] - 1, coord[1]], [coord[0] + 1, coord[1]]])
+
+    return placeBoofer
+
+
+# Функция возвращает буфер возможных точек для
+# Расположения корабля в 2 клетки
+def getMidShipBoofer(field, coord):
+    placeBoofer = []
+
+    if checkOutOfRange(coord[1] + 1):
+        if field[coord[0]][coord[1] + 1] == 'О':
+            placeBoofer.append([coord, [coord[0], coord[1] + 1]])
+    if checkOutOfRange(coord[1] - 1):
+        if field[coord[0]][coord[1] - 1] == 'О':
+            placeBoofer.append([coord, [coord[0], coord[1] - 1]])
+    if checkOutOfRange(coord[0] + 1):
+        if field[coord[0] + 1][coord[1]] == 'О':
+            placeBoofer.append([coord, [coord[0] + 1, coord[1]]])
+    if checkOutOfRange(coord[0] - 1):
+        if field[coord[0] - 1][coord[1]] == 'О':
+            placeBoofer.append([coord, [coord[0] - 1, coord[1]]])
+
+    return placeBoofer
+
+
 class Flot:
 
     def __init__(self):
+        self.realField = [
+            ['О', 'О', 'О', 'О', 'О', 'О'],
+            ['О', 'О', 'О', 'О', 'О', 'О'],
+            ['О', 'О', 'О', 'О', 'О', 'О'],
+            ['О', 'О', 'О', 'О', 'О', 'О'],
+            ['О', 'О', 'О', 'О', 'О', 'О'],
+            ['О', 'О', 'О', 'О', 'О', 'О'],
+        ]
+
+        self.displayField = [
+            ['О', 'О', 'О', 'О', 'О', 'О'],
+            ['О', 'О', 'О', 'О', 'О', 'О'],
+            ['О', 'О', 'О', 'О', 'О', 'О'],
+            ['О', 'О', 'О', 'О', 'О', 'О'],
+            ['О', 'О', 'О', 'О', 'О', 'О'],
+            ['О', 'О', 'О', 'О', 'О', 'О'],
+        ]
+
         self.bigShip = Ship(3)
         self.midShip1 = Ship(2)
         self.midShip2 = Ship(2)
@@ -273,7 +372,7 @@ class Ship:
         self.coords = [[None, None] for _ in range(0, size)]
 
 
-gameProccess = GameField()
+gameProccess = GameProccess()
 
 gameProccess.StartPlacementShips()
 
