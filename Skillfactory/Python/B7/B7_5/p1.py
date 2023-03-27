@@ -30,22 +30,6 @@ def getCoordinage():
         except ValueError:
             print('Координаты должны состоять только из цифр')
 
-
-class GameProccess:
-
-    def __init__(self, name='name'):
-        self.playerName = name
-        self.playerShips = Flot()
-        self.computerShips = Flot()
-
-    def StartPlacementShips(self):
-        allShips = self.playerShips.getAllShips()
-
-        for ship in allShips:
-            tryShipPlace(self.playerShips.realField, self.playerShips.displayField, ship.size, ship.coords,
-                         self.playerName)
-
-
 # Функция располагает на поле корабль
 def tryShipPlace(field, visionField, size, coords, name='computer'):
     print('Установка корабля')
@@ -332,6 +316,19 @@ def getMidShipBoofer(field, coord):
 
     return placeBoofer
 
+class GameProccess:
+
+    def __init__(self, name='name'):
+        self.playerName = name
+        self.playerShips = Flot()
+        self.computerShips = Flot()
+
+    def StartPlacementShips(self):
+        allShips = self.playerShips.getAllShips()
+
+        for ship in allShips:
+            tryShipPlace(self.playerShips.realField, self.playerShips.displayField, ship.size, ship.coords,
+                         self.playerName)
 
 class Flot:
 
