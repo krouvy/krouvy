@@ -1,3 +1,20 @@
+import random
+
+shipSimbol = '□'
+clearSimbol = ' '
+bombSimbol = '*'
+
+fieldSize = 5
+
+
+def getRandomCoordinate():
+    return [random.randint(0, fieldSize - 1), random.randint(0, fieldSize - 1)]
+
+
+def getRandomBoofer(booferLen):
+    return random.randint(0, booferLen)
+
+
 def printField(field):
     print(' ', end=" ")
     for i in range(0, len(field)):
@@ -18,9 +35,9 @@ def getCoordinage():
             if len(coordinates) == 2:
                 if all([
                     coordinates[0] >= 1,
-                    coordinates[0] <= 6,
+                    coordinates[0] <= fieldSize,
                     coordinates[1] >= 1,
-                    coordinates[1] <= 6
+                    coordinates[1] <= fieldSize
                 ]):
                     return [coordinates[0] - 1, coordinates[1] - 1]
                 else:
@@ -30,29 +47,54 @@ def getCoordinage():
         except ValueError:
             print('Координаты должны состоять только из цифр')
 
+
 # Функция располагает на поле корабль
 def tryShipPlace(field, visionField, size, coords, name='computer'):
-    print('Установка корабля')
-    printField(visionField)
+    countTryPlacement = 0
 
-    while size:
+    if not name == 'computer':
+        print('Установка корабля')
+        printField(visionField)
+
+    while size and countTryPlacement <= 70:
+        countTryPlacement += 1
         placeBoofer = []
-        coord = getCoordinage()
+        if name == 'computer':
+            coord = getRandomCoordinate()
+        else:
+            coord = getCoordinage()
 
         # Если первая точка не занята
-        if field[coord[0]][coord[1]] == 'О':
+        if field[coord[0]][coord[1]] == clearSimbol:
             # Получение буферов возможных точек
             # для установки для разных кораблей
             if size == 3:
                 placeBoofer = getBigShipBoofer(field, coord)
             elif size == 2:
-                placeBoofer = getMidShipBoofer(field, coord)
+                placeBoofer = getMidShipBoofer(visionField, coord)
             elif size == 1:
-                print('Не готово')
+                if name == 'computer':
+                    if checkLitShip(field, coord):
+                        field[coord[0]][coord[1]] = shipSimbol
+                        break
+                    else:
+                        continue
+                else:
+                    if checkLitShip(visionField, coord):
+                        coords[0] = coord
+                        visionField[coords[0][0]][coords[0][1]] = shipSimbol
+                        field[coords[0][0]][coords[0][1]] = shipSimbol
+                        printField(visionField)
+                        break
+                    else:
+                        if not name == 'computer':
+                            print('В эту точку нельзя ставить корабль')
+                        continue
 
             # Если буфер возможных точек остался пустым, то к началу цикла
             if len(placeBoofer) == 0:
-                print('Нет вариантов для установки точки')
+                if not name == 'computer':
+                    print('Нет вариантов для установки точки')
                 continue
             else:
                 readyBoofer = []
@@ -71,24 +113,35 @@ def tryShipPlace(field, visionField, size, coords, name='computer'):
                 # то из этой точки не поставить корабль,
                 # переход к началу цикла
                 if len(readyBoofer) == 0:
-                    print('Нет вариантов для установки точки')
+                    if not name == 'computer':
+                        print('Нет вариантов для установки точки')
                     continue
                 else:
                     # Иначе заполняем на видимом поле первую точку
                     coords[0] = coord
-                    visionField[coords[0][0]][coords[0][1]] = 'S'
-                    printField(visionField)
+                    if not name == 'computer':
+                        visionField[coords[0][0]][coords[0][1]] = shipSimbol
+                        printField(visionField)
 
                     # Уменьшаем стартовый размер корабля на 1
                     size -= 1
 
                     # цикл установки второй точки
-                    while size:
+                    while size and countTryPlacement <= 70:
                         # Новый буфер, который будет хранить совпадение
                         # уже двух точек
                         lastBoofer = []
+                        countTryPlacement += 1
 
-                        secondCoord = getCoordinage()
+                        if name == 'computer':
+                            getRand = getRandomBoofer(len(readyBoofer) - 1)
+                            randBoofer = readyBoofer[getRand]
+                            for randCoord in randBoofer:
+                                field[randCoord[0]][randCoord[1]] = shipSimbol
+                            size = 0
+                            break
+                        else:
+                            secondCoord = getCoordinage()
 
                         # Если 2 точки присутвуют в буфере, добавляем их в новый буфер
                         for readyCoord in readyBoofer:
@@ -101,84 +154,98 @@ def tryShipPlace(field, visionField, size, coords, name='computer'):
                             if size == 1:
                                 # И точка уже была введена этим кораблем
                                 if secondCoord in coords:
-                                    print('Координата занята')
+                                    if not name == 'computer':
+                                        print('Координата занята')
                                 else:
                                     # Проверяю есть ли эта точка в первом буфере
                                     for readyCoord in readyBoofer:
                                         if secondCoord in readyCoord:
                                             # Если да, то рисую корабль длинной 2 клетки
                                             coords[1] = secondCoord
-                                            visionField[coords[1][0]][coords[1][1]] = 'S'
+                                            visionField[coords[1][0]][coords[1][1]] = shipSimbol
                                             printField(visionField)
                                             size -= 1
                                             # Заполняю реальное поле координатами корабля
                                             for finalCoord in coords:
-                                                field[finalCoord[0]][finalCoord[1]] = 'S'
+                                                field[finalCoord[0]][finalCoord[1]] = shipSimbol
                                             break
                                     # если цикл корабль длинной 2 клетки не нарисовался,
                                     # то переход к началу цикла
                                     if size == 1:
-                                        print('Нельзя так располагать корабль')
+                                        if not name == 'computer':
+                                            print('Нельзя так располагать корабль')
                                         continue
                             # если корабль в 3 клетки, но второй
                             # буфер остался пустым
                             else:
-                                print('Нельзя так располагать корабль')
+                                if not name == 'computer':
+                                    print('Нельзя так располагать корабль')
                                 continue
                         # Если новый буфер не пустой
                         else:
                             # проверка не было ли повтора
                             if secondCoord in coords:
-                                print('Координата занята')
+                                if not name == 'computer':
+                                    print('Координата занята')
                             # если без повтора,
                             # то устанавливается вторая координата
                             else:
                                 coords[1] = secondCoord
-                                visionField[coords[1][0]][coords[1][1]] = 'S'
+                                visionField[coords[1][0]][coords[1][1]] = shipSimbol
                                 printField(visionField)
                                 size -= 1
                                 # Если это корабль длинной 2 клетки,
                                 # то заполняем реальное поле и останавливаем цикл
                                 if size == 0:
                                     for finalCoord in coords:
-                                        field[finalCoord[0]][finalCoord[1]] = 'S'
+                                        field[finalCoord[0]][finalCoord[1]] = shipSimbol
                                 break
                     # Если цикл не был остановлен,
                     # то включается цикл подбора
                     # последней точки
-                    while size:
+                    while size and countTryPlacement <= 70:
+                        countTryPlacement += 1
                         lastCoord = getCoordinage()
 
                         for lastBooferCord in lastBoofer:
                             if lastCoord in lastBooferCord:
                                 if lastCoord in coords:
-                                    print('Координата занята')
+                                    if not name == 'computer':
+                                        print('Координата занята')
                                 else:
                                     coords[2] = lastCoord
-                                    visionField[coords[2][0]][coords[2][1]] = 'S'
+                                    visionField[coords[2][0]][coords[2][1]] = shipSimbol
                                     printField(visionField)
                                     size = 0
                                     for finalCoord in coords:
-                                        field[finalCoord[0]][finalCoord[1]] = 'S'
+                                        field[finalCoord[0]][finalCoord[1]] = shipSimbol
 
                         if size == 1:
-                            print('Нельзя так располагать корабль', size)
+                            if not name == 'computer':
+                                print('Нельзя так располагать корабль', size)
         else:
-            print('Точка занята')
-    print('Корабль установлен')
+            if not name == 'computer':
+                print('Точка занята')
+    if not name == 'computer':
+        print('Корабль установлен')
+    if countTryPlacement >= 70:
+        print('Не удалось установить корабль')
+        return False
+    else:
+        return True
 
 
 # Функция проверяет поля вокруг точки
 # если в точке есть корабль, возвращает False
 def checkShipsOutsidePoint(coord, field):
     if all([coord[0] >= 1,
-            coord[0] <= 4,
+            coord[0] <= fieldSize - 2,
             coord[1] >= 1,
-            coord[1] <= 4]):
-        if all([field[coord[0] - 1][coord[1]] == 'О',
-                field[coord[0] + 1][coord[1]] == 'О',
-                field[coord[0]][coord[1] - 1] == 'О',
-                field[coord[0]][coord[1] + 1] == 'О',
+            coord[1] <= fieldSize - 2]):
+        if all([field[coord[0] - 1][coord[1]] == clearSimbol,
+                field[coord[0] + 1][coord[1]] == clearSimbol,
+                field[coord[0]][coord[1] - 1] == clearSimbol,
+                field[coord[0]][coord[1] + 1] == clearSimbol,
                 ]):
             return True
         else:
@@ -186,76 +253,76 @@ def checkShipsOutsidePoint(coord, field):
     else:
         if coord[0] == 0:
             if coord[1] == 0:
-                if field[coord[0] + 1][coord[1]] == 'О' and field[coord[0]][coord[1] + 1] == 'О':
+                if field[coord[0] + 1][coord[1]] == clearSimbol and field[coord[0]][coord[1] + 1] == clearSimbol:
                     return True
                 else:
                     return False
-            elif coord[1] == 5:
-                if field[coord[0] - 1][coord[1]] == 'О' and field[coord[0]][coord[1] - 1] == 'О':
+            elif coord[1] == fieldSize - 1:
+                if field[coord[0] - 1][coord[1]] == clearSimbol and field[coord[0]][coord[1] - 1] == clearSimbol:
                     return True
                 else:
                     return False
             else:
-                if all([field[coord[0] - 1][coord[1]] == 'О',
-                        field[coord[0] + 1][coord[1]] == 'О',
-                        field[coord[0]][coord[1] + 1] == 'О']):
+                if all([field[coord[0]][coord[1] - 1] == clearSimbol,
+                        field[coord[0]][coord[1] + 1] == clearSimbol,
+                        field[coord[0] + 1][coord[1]] == clearSimbol]):
                     return True
                 else:
                     return False
-        elif coord[0] == 5:
+        elif coord[0] == fieldSize - 1:
             if coord[1] == 0:
-                if field[coord[0] - 1][coord[1]] == 'О' and field[coord[0]][coord[1] + 1] == 'О':
+                if field[coord[0] - 1][coord[1]] == clearSimbol and field[coord[0]][coord[1] + 1] == clearSimbol:
                     return True
                 else:
                     return False
-            elif coord[1] == 5:
-                if field[coord[0] - 1][coord[1]] == 'О' and field[coord[0]][coord[1] - 1] == 'О':
+            elif coord[1] == fieldSize - 1:
+                if field[coord[0] - 1][coord[1]] == clearSimbol and field[coord[0]][coord[1] - 1] == clearSimbol:
                     return True
                 else:
                     return False
             else:
-                if all([field[coord[0] - 1][coord[1]] == 'О',
-                        field[coord[0]][coord[1] + 1] == 'О',
-                        field[coord[0]][coord[1] - 1] == 'О']):
+                if all([field[coord[0] - 1][coord[1]] == clearSimbol,
+                        field[coord[0]][coord[1] + 1] == clearSimbol,
+                        field[coord[0]][coord[1] - 1] == clearSimbol]):
                     return True
                 else:
                     return False
         else:
             if coord[1] == 0:
                 if coord[0] == 0:
-                    if field[coord[0] + 1][coord[1]] == 'О' and field[coord[0]][coord[1] + 1] == 'О':
+                    if field[coord[0] + 1][coord[1]] == clearSimbol and field[coord[0]][coord[1] + 1] == clearSimbol:
                         return True
                     else:
                         return False
-                elif coord[0] == 5:
-                    if field[coord[0] - 1][coord[1]] == 'О' and field[coord[0]][coord[1] + 1] == 'О':
+                elif coord[0] == fieldSize - 1:
+                    if field[coord[0] - 1][coord[1]] == clearSimbol and field[coord[0]][coord[1] + 1] == clearSimbol:
                         return True
                     else:
                         return False
                 else:
                     if all([
-                        field[coord[0] - 1][coord[1]] == 'О',
-                        field[coord[0] + 1][coord[1]] == 'О',
-                        field[coord[0]][coord[1] + 1] == 'О'
+                        field[coord[0] - 1][coord[1]] == clearSimbol,
+                        field[coord[0] + 1][coord[1]] == clearSimbol,
+                        field[coord[0]][coord[1] + 1] == clearSimbol
                     ]):
                         return True
                     else:
                         return False
-            elif coord[1] == 5:
+            elif coord[1] == fieldSize - 1:
                 if coord[0] == 0:
-                    if field[coord[0] + 1][coord[1]] == 'О' and field[coord[0]][coord[1] - 1] == 'О':
+                    if field[coord[0] + 1][coord[1]] == clearSimbol and field[coord[0]][coord[1] - 1] == clearSimbol:
                         return True
                     else:
                         return False
-                elif coord[0] == 5:
-                    if field[coord[0] - 1][coord[1]] == 'О' and field[coord[0]][coord[1] - 1] == 'О':
+                elif coord[0] == fieldSize - 1:
+                    if field[coord[0] - 1][coord[1]] == clearSimbol and field[coord[0]][coord[1] - 1] == clearSimbol:
                         return True
                     else:
                         return False
                 else:
-                    if all([field[coord[0] - 1][coord[1]] == 'О',
-                            field[coord[0] + 1][coord[1]] == 'О',
-                            field[coord[0]][coord[1] - 1] == 'О']):
+                    if all([field[coord[0] - 1][coord[1]] == clearSimbol,
+                            field[coord[0] + 1][coord[1]] == clearSimbol,
+                            field[coord[0]][coord[1] - 1] == clearSimbol]):
                         return True
                     else:
                         return False
@@ -263,7 +330,7 @@ def checkShipsOutsidePoint(coord, field):
 
 # Проверяет входит ли точка в размер поля
 def checkOutOfRange(coord):
-    if coord >= 0 and coord <= 5:
+    if coord >= 0 and coord <= fieldSize - 1:
         return True
     else:
         False
@@ -275,22 +342,22 @@ def getBigShipBoofer(field, coord):
     placeBoofer = []
 
     if checkOutOfRange(coord[1] + 1) and checkOutOfRange(coord[1] + 2):
-        if field[coord[0]][coord[1] + 1] == 'О' and field[coord[0]][coord[1] + 2] == 'О':
+        if field[coord[0]][coord[1] + 1] == clearSimbol and field[coord[0]][coord[1] + 2] == clearSimbol:
             placeBoofer.append([coord, [coord[0], coord[1] + 1], [coord[0], coord[1] + 2]])
     if checkOutOfRange(coord[1] - 1) and checkOutOfRange(coord[1] - 2):
-        if field[coord[0]][coord[1] - 1] == 'О' and field[coord[0]][coord[1] - 2] == 'О':
+        if field[coord[0]][coord[1] - 1] == clearSimbol and field[coord[0]][coord[1] - 2] == clearSimbol:
             placeBoofer.append([coord, [coord[0], coord[1] - 1], [coord[0], coord[1] - 2]])
     if checkOutOfRange(coord[1] - 1) and checkOutOfRange(coord[1] + 1):
-        if field[coord[0]][coord[1] - 1] == 'О' and field[coord[0]][coord[1] + 1] == 'О':
+        if field[coord[0]][coord[1] - 1] == clearSimbol and field[coord[0]][coord[1] + 1] == clearSimbol:
             placeBoofer.append([coord, [coord[0], coord[1] - 1], [coord[0], coord[1] + 1]])
     if checkOutOfRange(coord[0] + 1) and checkOutOfRange(coord[0] + 2):
-        if field[coord[0] + 1][coord[1]] == 'О' and field[coord[0] + 2][coord[1]] == 'О':
+        if field[coord[0] + 1][coord[1]] == clearSimbol and field[coord[0] + 2][coord[1]] == clearSimbol:
             placeBoofer.append([coord, [coord[0] + 1, coord[1]], [coord[0] + 2, coord[1]]])
     if checkOutOfRange(coord[0] - 1) and checkOutOfRange(coord[0] - 2):
-        if field[coord[0] - 1][coord[1]] == 'О' and field[coord[0] - 2][coord[1]] == 'О':
+        if field[coord[0] - 1][coord[1]] == clearSimbol and field[coord[0] - 2][coord[1]] == clearSimbol:
             placeBoofer.append([coord, [coord[0] - 1, coord[1]], [coord[0] - 2, coord[1]]])
     if checkOutOfRange(coord[0] - 1) and checkOutOfRange(coord[0] + 1):
-        if field[coord[0] - 1][coord[1]] == 'О' and field[coord[0] + 1][coord[1]] == 'О':
+        if field[coord[0] - 1][coord[1]] == clearSimbol and field[coord[0] + 1][coord[1]] == clearSimbol:
             placeBoofer.append([coord, [coord[0] - 1, coord[1]], [coord[0] + 1, coord[1]]])
 
     return placeBoofer
@@ -302,19 +369,50 @@ def getMidShipBoofer(field, coord):
     placeBoofer = []
 
     if checkOutOfRange(coord[1] + 1):
-        if field[coord[0]][coord[1] + 1] == 'О':
+        if field[coord[0]][coord[1] + 1] == clearSimbol:
             placeBoofer.append([coord, [coord[0], coord[1] + 1]])
     if checkOutOfRange(coord[1] - 1):
-        if field[coord[0]][coord[1] - 1] == 'О':
+        if field[coord[0]][coord[1] - 1] == clearSimbol:
             placeBoofer.append([coord, [coord[0], coord[1] - 1]])
     if checkOutOfRange(coord[0] + 1):
-        if field[coord[0] + 1][coord[1]] == 'О':
+        if field[coord[0] + 1][coord[1]] == clearSimbol:
             placeBoofer.append([coord, [coord[0] + 1, coord[1]]])
     if checkOutOfRange(coord[0] - 1):
-        if field[coord[0] - 1][coord[1]] == 'О':
+        if field[coord[0] - 1][coord[1]] == clearSimbol:
             placeBoofer.append([coord, [coord[0] - 1, coord[1]]])
 
     return placeBoofer
+
+
+def checkLitShip(field, coord):
+    placeBoofer = []
+
+    if checkOutOfRange(coord[1] + 1):
+        if field[coord[0]][coord[1] + 1] == clearSimbol:
+            placeBoofer.append(True)
+        else:
+            placeBoofer.append(False)
+    if checkOutOfRange(coord[1] - 1):
+        if field[coord[0]][coord[1] - 1] == clearSimbol:
+            placeBoofer.append(True)
+        else:
+            placeBoofer.append(False)
+    if checkOutOfRange(coord[0] + 1):
+        if field[coord[0] + 1][coord[1]] == clearSimbol:
+            placeBoofer.append(True)
+        else:
+            placeBoofer.append(False)
+    if checkOutOfRange(coord[0] - 1):
+        if field[coord[0] - 1][coord[1]] == clearSimbol:
+            placeBoofer.append(True)
+        else:
+            placeBoofer.append(False)
+
+    if False in placeBoofer:
+        return False
+    else:
+        return True
+
 
 class GameProccess:
 
@@ -324,32 +422,47 @@ class GameProccess:
         self.computerShips = Flot()
 
     def StartPlacementShips(self):
-        allShips = self.playerShips.getAllShips()
 
-        for ship in allShips:
-            tryShipPlace(self.playerShips.realField, self.playerShips.displayField, ship.size, ship.coords,
-                         self.playerName)
+        playerShips = self.playerShips.getAllShips()
+        computerShips = self.computerShips.getAllShips()
+
+        error = 0
+
+        while error <= 3:
+            for ship in computerShips:
+                shipPlacement = tryShipPlace(self.computerShips.realField, self.computerShips.displayField, ship.size,
+                                             ship.coords)
+                if shipPlacement:
+                    continue
+                else:
+                    error += 1
+                    self.computerShips.realField = [[clearSimbol for _ in range(0, fieldSize)] for _ in range(0, fieldSize)]
+                    self.computerShips.displayField = [[clearSimbol for _ in range(0, fieldSize)] for _ in range(0, fieldSize)]
+                    print('Ошибка, корабли требуется установить заново')
+                    break
+            if error == 0:
+                break
+
+        if error >= 3:
+            print('Программе не удалось установить корабли для соперника, попробуйте увеличить размер поля')
+            return False
+
+        for ship in playerShips:
+            tryShipPlace(self.playerShips.realField, self.playerShips.displayField, ship.size,
+                                         ship.coords, self.playerName)
+
+        print('Все поля готовы\n')
+        print('       __Ваше поле__')
+        printField(self.playerShips.realField)
+        print('\n     __Вражеское поле__')
+        printField(self.computerShips.displayField)
+
 
 class Flot:
 
     def __init__(self):
-        self.realField = [
-            ['О', 'О', 'О', 'О', 'О', 'О'],
-            ['О', 'О', 'О', 'О', 'О', 'О'],
-            ['О', 'О', 'О', 'О', 'О', 'О'],
-            ['О', 'О', 'О', 'О', 'О', 'О'],
-            ['О', 'О', 'О', 'О', 'О', 'О'],
-            ['О', 'О', 'О', 'О', 'О', 'О'],
-        ]
-
-        self.displayField = [
-            ['О', 'О', 'О', 'О', 'О', 'О'],
-            ['О', 'О', 'О', 'О', 'О', 'О'],
-            ['О', 'О', 'О', 'О', 'О', 'О'],
-            ['О', 'О', 'О', 'О', 'О', 'О'],
-            ['О', 'О', 'О', 'О', 'О', 'О'],
-            ['О', 'О', 'О', 'О', 'О', 'О'],
-        ]
+        self.realField = [[clearSimbol for _ in range(0, fieldSize)] for _ in range(0, fieldSize)]
+        self.displayField = [[clearSimbol for _ in range(0, fieldSize)] for _ in range(0, fieldSize)]
 
         self.bigShip = Ship(3)
         self.midShip1 = Ship(2)
@@ -372,20 +485,3 @@ class Ship:
 gameProccess = GameProccess()
 
 gameProccess.StartPlacementShips()
-
-# playerShips = gameProccess.playerShips.getAllShips()
-# for ship in playerShips:
-#     print(ship.size)
-#     print(ship.coords)
-
-# field = [['О', 'О', 'О', 'О', 'О', 'О'],
-#          ['О', 'О', 'О', 'О', 'О', 'О'],
-#          ['О', 'О', 'О', 'О', 'О', 'О'],
-#          ['О', 'О', 'О', 'О', 'О', 'О'],
-#          ['О', 'О', 'О', 'О', 'О', 'О'],
-#          ['О', 'О', 'О', 'О', 'О', 'О'],
-#          ]
-# for _ in range(1, 10):
-#     printField(field)
-#     coordinate = getCoordinage()
-#     field[coordinate[0] - 1][coordinate[1] - 1] = '*'
