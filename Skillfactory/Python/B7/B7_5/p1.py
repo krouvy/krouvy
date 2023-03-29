@@ -528,12 +528,13 @@ class Flot:
         self.litShip1 = Ship(1)
         self.litShip2 = Ship(1)
         self.litShip3 = Ship(1)
+        self.litShip4 = Ship(1)
 
         self.flotSize = 10
         # self.flotSize = self.getFlotSize()
 
     def getAllShips(self):
-        return [self.bigShip, self.midShip1, self.midShip2, self.litShip1, self.litShip2, self.litShip3]
+        return [self.bigShip, self.midShip1, self.midShip2, self.litShip1, self.litShip2, self.litShip3, self.litShip4]
 
     def getFlotSize(self):
         Ships = self.getAllShips()
