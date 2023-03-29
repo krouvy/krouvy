@@ -1,9 +1,9 @@
 import random
 
-shipSimbol = '□'
+shipHitted = '□'
+shipSimbol = '■'
 clearSimbol = ' '
-bombSimbol = '*'
-
+bombSimbol = '●'
 fieldSize = 5
 
 
@@ -414,6 +414,25 @@ def checkLitShip(field, coord):
         return True
 
 
+def shoot(coord, flotSize, displayField, realField):
+    if not displayField[coord[0]][coord[1]] == bombSimbol and not displayField[coord[0]][coord[1]] == shipHitted:
+        if realField[coord[0]][coord[1]] == shipSimbol:
+            print('Попадание')
+            realField[coord[0]][coord[1]] = shipHitted
+            displayField[coord[0]][coord[1]] = shipHitted
+            flotSize -= 1
+            print('Оставшийся флот', flotSize)
+            return [False, flotSize]
+        else:
+            print('Мимо')
+            displayField[coord[0]][coord[1]] = bombSimbol
+            print('Оставшийся флот', flotSize)
+            return [True, flotSize]
+    else:
+        print('В эту точку уже стреляли')
+    return [False, flotSize]
+
+
 class GameProccess:
 
     def __init__(self, name='name'):
@@ -421,7 +440,7 @@ class GameProccess:
         self.playerShips = Flot()
         self.computerShips = Flot()
 
-    def StartPlacementShips(self):
+    def startPlacementShips(self):
 
         playerShips = self.playerShips.getAllShips()
         computerShips = self.computerShips.getAllShips()
@@ -436,8 +455,10 @@ class GameProccess:
                     continue
                 else:
                     error += 1
-                    self.computerShips.realField = [[clearSimbol for _ in range(0, fieldSize)] for _ in range(0, fieldSize)]
-                    self.computerShips.displayField = [[clearSimbol for _ in range(0, fieldSize)] for _ in range(0, fieldSize)]
+                    self.computerShips.realField = [[clearSimbol for _ in range(0, fieldSize)] for _ in
+                                                    range(0, fieldSize)]
+                    self.computerShips.displayField = [[clearSimbol for _ in range(0, fieldSize)] for _ in
+                                                       range(0, fieldSize)]
                     print('Ошибка, корабли требуется установить заново')
                     break
             if error == 0:
@@ -449,13 +470,50 @@ class GameProccess:
 
         for ship in playerShips:
             tryShipPlace(self.playerShips.realField, self.playerShips.displayField, ship.size,
-                                         ship.coords, self.playerName)
+                         ship.coords, self.playerName)
 
-        print('Все поля готовы\n')
-        print('       __Ваше поле__')
-        printField(self.playerShips.realField)
-        print('\n     __Вражеское поле__')
-        printField(self.computerShips.displayField)
+    def startFight(self):
+
+        computerFlotSize = self.computerShips.flotSize
+        playerFlotSize = self.playerShips.flotSize
+
+        computerShoot = False
+        arrayRandomShoot = [i for i in range(0, fieldSize ** 2)]
+
+        while computerFlotSize > 0 and playerFlotSize > 0:
+
+            if computerShoot:
+                print('Ходит компьютер...')
+
+                randShoot = arrayRandomShoot.pop(random.randint(0, len(arrayRandomShoot) - 1))
+                coord = [randShoot // fieldSize, randShoot % fieldSize]
+                Shoot = shoot(coord, playerFlotSize, self.playerShips.displayField, self.playerShips.realField)
+                playerFlotSize = Shoot[1]
+                print('     __Ваше поле__')
+                printField(self.playerShips.displayField)
+            else:
+                print('Ходит игрок..')
+                print('   __Поле компьютера__')
+                printField(self.computerShips.displayField)
+
+                coord = getCoordinage()
+                Shoot = shoot(coord, computerFlotSize, self.computerShips.displayField, self.computerShips.realField)
+                computerFlotSize = Shoot[1]
+                if Shoot[0]:
+                    print('   __Поле компьютера__')
+                    printField(self.computerShips.displayField)
+
+            if Shoot[0]:
+                computerShoot = not computerShoot
+
+        if computerFlotSize == 0:
+            print('Победил игрок')
+            print('   __Поле компьютера__')
+            printField(self.computerShips.displayField)
+        else:
+            print('Победил компьютер')
+            print('     __Ваше поле__')
+            printField(self.playerShips.displayField)
 
 
 class Flot:
@@ -471,8 +529,18 @@ class Flot:
         self.litShip2 = Ship(1)
         self.litShip3 = Ship(1)
 
+        self.flotSize = 10
+        # self.flotSize = self.getFlotSize()
+
     def getAllShips(self):
         return [self.bigShip, self.midShip1, self.midShip2, self.litShip1, self.litShip2, self.litShip3]
+
+    def getFlotSize(self):
+        Ships = self.getAllShips()
+        size = 0
+        for Ship in Ships:
+            size += Ship.size
+        return size
 
 
 class Ship:
@@ -483,5 +551,5 @@ class Ship:
 
 
 gameProccess = GameProccess()
-
-gameProccess.StartPlacementShips()
+gameProccess.startPlacementShips()
+gameProccess.startFight()
