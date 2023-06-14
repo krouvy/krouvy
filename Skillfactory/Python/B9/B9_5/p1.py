@@ -8,3 +8,34 @@ GRAPH = {
     'Пушкинская': {'Звенигородская': 3, 'Владимирская': 4},
     'Звенигородская': {'Пушкинская': 3, 'Садовая': 5}
 }
+
+D = {k: 100 for k in GRAPH.keys()}
+U = {k: False for k in GRAPH.keys()}
+
+start_k = 'Адмиралтейская'  # стартовая вершина
+D[start_k] = 0  # расстояние от неё до самой себя равно
+
+for _ in range(len(D)):
+    print('Вывод всех не просмотренных Вершин')
+    print([k for k in U.keys() if not U[k]])
+
+    print('Все все станции', {k: D[k] for k in U.keys() if not U[k]})
+
+    # выбираем среди непросмотренных наименьшее по расстоянию
+    min_k = min([k for k in U.keys() if not U[k]], key=lambda x: D[x])
+    print('Самая короткая', min_k)
+
+    print('цикл', _)
+    for v in GRAPH[min_k].keys():  # проходимся по всем смежным вершинам
+        print(min_k, '-', v)
+        print(D[v], 'или', D[min_k], '+', GRAPH[min_k][v])
+        D[v] = min(D[v], D[min_k] + GRAPH[min_k][v])  # минимум
+        print('Меньшее', D[v])
+    U[min_k] = True  # просмотренную вершину помечаем
+    print('Все вершины пути от', min_k)
+    for v in GRAPH[min_k].keys():
+        print(v, '-', D[v], end=', ')
+    print()
+
+for i in D:
+    print(i, D[i])
