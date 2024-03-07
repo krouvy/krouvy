@@ -13,7 +13,7 @@ class BinarySearchTree:
                 values.append("%d" % last.value)  # добавляем значение
                 queue.append(last.left_child)  # добавляем левого потомка
                 queue.append(last.right_child)  # добавляем правого потомка
-            return ''.join(values)
+        return ' '.join(values)
 
     def search(self, x):
         if self.value == x:  # если нашли элемент,
@@ -48,3 +48,36 @@ class BinarySearchTree:
             else:
                 current = current.right_child
         return successor
+
+    def prev_value(self, x):
+        current = self
+        successor = None
+        while current is not None:
+            if current.value < x:
+                successor = current
+                current = current.right_child
+            else:
+                current = current.left_child
+        return successor
+
+    def insert(self, x):
+        if x > self.value:  # идем в правое поддерево
+            if self.right_child is not None:  # если оно существует,
+                self.right_child.insert(x)  # делаем рекурсивный вызов
+            else:  # иначе создаем правого потомка
+                self.right_child = BinarySearchTree(x)
+        else:  # иначе в левое поддерево и делаем аналогичные действия
+            if self.left_child is not None:
+                self.left_child.insert(x)
+            else:
+                self.left_child = BinarySearchTree(x)
+        return self  # возвращаем корень
+
+
+Tree = BinarySearchTree(52)
+L = [5, 57, 43, 656, 4, 35, 77, 2, 5, 43]
+
+for i in L:
+    Tree.insert(i)
+
+print(Tree)
